@@ -1,10 +1,16 @@
-import {Form, Card, Col, Row, Button} from 'react-bootstrap';
+import {useState} from 'react';
+import {Form, Card, Col, Row, Button, Alert} from 'react-bootstrap';
+import reactDom from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import axios from './../axios';
 
 const LoginPage = (props) => {
 
     const navigate = useNavigate();
+
+    const [regSuccess, setRegSuccess] = useState(false);
+    const [regFail, setRegFail] = useState(false);
+    const [loginFail, setLoginFail] = useState(false);
 
     const handleSubmitLoginForm = (event) => {
         event.preventDefault()
@@ -18,7 +24,7 @@ const LoginPage = (props) => {
                 props.setUser(res.data.name)
                 navigate('/search');
             }else{
-                console.log("zle dane!")
+                setLoginFail(true)
             }
         }).catch(err => {
             console.log(err.message)
@@ -33,23 +39,67 @@ const LoginPage = (props) => {
         var pass2 = event.target[3].value;
         console.log(name, login, pass1, pass2);
         if(pass1 === pass2){
-            axios.post(`/create-user`, {name: name, login: login, password: pass1})
+            axios.get("/get-all")
             .then(res => {
-                if(res.status === 200){
-                    console.log("zrobione konto, super")
+                var isOk = true;
+                for(var i=0; i<res.data.all.length; i++){
+                    if(res.data.all[i].login === login || res.data.all[i].user === name){
+                        isOk = false;
+                    }
                 }
-            }).catch(err => {
-                console.log(err.message)
+                if(isOk){
+                    axios.post(`/create-user`, {name: name, login: login, password: pass1})
+                    .then(res => {
+                        if(res.status === 200){
+                            setRegSuccess(true)
+                        }
+                    }).catch(err => {
+                        setRegFail(true);
+                    })
+                }else{
+                    setRegFail(true);
+                }    
+            })
+            .catch(err => {
+                setRegFail(true);
             })
         }else{
-            console.log("hasla sie nie zgadzaja")
+            setRegFail(true);
         }
     }
+
+    const errLogin = (
+        <Alert variant="danger" onClose={() => setLoginFail(false)} dismissible>
+            <Alert.Heading>O nie!</Alert.Heading>
+            <p>
+            Nie udało się zalogować! Podano błędne dane lub wystąpił błąd serwera... Spróbuj ponownie
+            </p>
+      </Alert>
+    )
+
+    const errRegister = (
+        <Alert variant="danger" onClose={() => setRegFail(false)} dismissible>
+            <Alert.Heading>O nie!</Alert.Heading>
+            <p>
+            Nie udało się serejestrować! Podano błędne dane lub wystąpił błąd serwera... Spróbuj ponownie
+            </p>
+      </Alert>
+    )
+
+    const succRegister = (
+        <Alert variant="success" onClose={() => setRegSuccess(false)} dismissible>
+            <Alert.Heading>Poprawnie utworzono konto!</Alert.Heading>
+            <p>
+            Teraz możesz się zalogować
+            </p>
+      </Alert>
+    )
 
     return (
         <Row style={{margin: "40px"}}>
             <Col>
                 <Card style={{padding: "20px"}}>
+                    {loginFail ? errLogin : null}
                     <Card.Title>
                         Zaloguj się 
                     </Card.Title>
@@ -73,6 +123,8 @@ const LoginPage = (props) => {
             </Col>
             <Col>
                 <Card style={{padding: "20px"}}>
+                    {regFail ? errRegister : null}
+                    {regSuccess ? succRegister : null}
                     <Card.Title>
                         Zarejestruj się 
                     </Card.Title>
