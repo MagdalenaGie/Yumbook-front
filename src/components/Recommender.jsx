@@ -15,8 +15,8 @@ const Recommender = (props) => {
     const handleSubmitForm = (event) => {
         event.preventDefault()
         console.log("in submit")
-        var loc = event.target[0].value === "any" ? "" : event.target[0].value;
-        var qui = event.target[1].value === "any" ? "" : event.target[0].value;
+        var loc = event.target[0].value;
+        var qui = event.target[1].value;
         var friendList = "";
         var iter = 2
         friends.forEach( fri => {
@@ -27,7 +27,7 @@ const Recommender = (props) => {
         })
         friendList = friendList.slice(0, -1);
 
-        axios.get(`/get-best?cuisine=${qui}&location=${loc}&person=${friendList}&max=False`)
+        axios.post("/get-best", {cuisine: qui, location: loc, person: friendList, max: "True"})
         .then(res => {
             console.log(res.data)
             setRecommended(res.data)
@@ -67,12 +67,13 @@ const Recommender = (props) => {
     const friendOptions = friends.map(fri => <Form.Check type="checkbox" label={fri}/>)
 
     let recommendedRows = recommended.map((res, index) => {
+        console.log(res)
         return (
             <tr>
                 <td>{index+1}</td>
                 <td>{res.restaurant}</td>
-                <td>{res.likers}</td>
-                <td>{res.occurance}</td>
+                <td>{res.likers.map(el => el + " ")}</td>
+                <td>{res.occurence}</td>
             </tr>)
     })
 
@@ -100,14 +101,14 @@ const Recommender = (props) => {
                         Wyszukaj filtrując po: 
                         </Form.Label>
                         <Col sm={2}>
-                            <Form.Select required >
-                                <option value="any">Dowolna lokalizacja</option>
+                            <Form.Select >
+                                <option value="">Dowolna lokalizacja</option>
                                 {locationOptions}
                             </Form.Select>
                         </Col>
                         <Col sm={2}>
-                            <Form.Select required >
-                                <option value="any">Dowolna kuchnia</option>
+                            <Form.Select>
+                                <option value="">Dowolna kuchnia</option>
                                 {cuisineOptions}
                             </Form.Select>
                         </Col>

@@ -17,7 +17,7 @@ const UserPage = (props) => {
     }, [])
 
     const handleLoadData = () => {
-        axios.get(`/get-restaurants?cuisine&location&person=${props.userName}`)
+        axios.post("/get-restaurants", {cuisine:"",location: "",person: props.userName})
         .then(res => {
             setRestaurants(res.data.restaurants)
         }).catch(err => {

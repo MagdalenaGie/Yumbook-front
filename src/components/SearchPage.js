@@ -8,14 +8,14 @@ const SearchPage = (props) => {
 
     const [restaurants, setRestaurants] = useState([]);
     const [liked, setLiked] = useState([]);
-    const [payload, setPayload] = useState("");
+    const [payload, setPayload] = useState();
 
     useEffect(()=>{
         handleLoadData();
     }, [])
 
     const handleLoadData = () => {
-        axios.get(`/get-restaurants?cuisine&location&person=${props.userName}`)
+        axios.post("/get-restaurants", {cuisine:"",location: "",person: props.userName})
         .then(res => {
             setLiked(res.data.restaurants.map(res => res.restaurant))
         }).catch(err => {
@@ -45,21 +45,37 @@ const SearchPage = (props) => {
         event.preventDefault()
         var param = event.target[0].value;
         var value = event.target[1].value;
-        var payload = "";
+        var body = {
+            cuisine: "",
+            location: "",
+            person: ""
+        };
         switch(param){
             case("cui"):
-                payload = `?cuisine=${value}&location&person`;
+                body = {
+                    cuisine: value,
+                    location: "",
+                    person: ""
+                }
                 break;
             case("loc"):
-                payload = `?cuisine&location=${value}&person`;
+                body = {
+                    cuisine: "",
+                    location: value,
+                    person: ""
+                }
                 break;
             case("lik"):
-                payload = `?cuisine&location&person=${value}`;
-                break;
+                body = {
+                    cuisine: "",
+                    location: "",
+                    person: value
+                }
+            break;
             default:
         }
-        setPayload(payload)
-        axios.get(`/get-restaurants${payload}`)
+        setPayload(body)
+        axios.post("/get-restaurants", body)
         .then(res => {
             console.log(res.data.restaurants)
             setRestaurants(res.data.restaurants)
@@ -69,8 +85,7 @@ const SearchPage = (props) => {
     }
 
     const handleRefreshSfterChange = () => {
-        console.log(payload)
-        axios.get(`/get-restaurants${payload}`)
+        axios.post("/get-restaurants", payload)
         .then(res => {
             console.log(res.data.restaurants)
             handleLoadData()
