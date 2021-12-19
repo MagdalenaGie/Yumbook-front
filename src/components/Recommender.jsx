@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect } from "react";
-import { Card, Form, Col, Button, Row, Stack, Table } from 'react-bootstrap';
+import { Card, Form, Col, Button, Row, Stack, Table, Alert } from 'react-bootstrap';
 import axios from "./../axios";
 
 const cuisines = ["Meksykańska", "Indyjska", "Gruzińska", "Pizzeria", "Kawiarnia", "Hawajska"];
@@ -12,9 +12,11 @@ const Recommender = (props) => {
         handleGetRecommendations();
     }, [])
 
+    const [foundAny, setFoundAny] = useState(false);
+    const [foundAnyNew, setFoundAnyNew] = useState(false);
+
     const handleSubmitForm = (event) => {
         event.preventDefault()
-        console.log("in submit")
         var loc = event.target[0].value;
         var qui = event.target[1].value;
         var friendList = "";
@@ -29,7 +31,9 @@ const Recommender = (props) => {
 
         axios.post("/get-best", {cuisine: qui, location: loc, person: friendList, max: "True"})
         .then(res => {
-            console.log(res.data)
+            if(res.data.length === 0){
+                setFoundAny(true)
+            }
             setRecommended(res.data)
         }).catch(err => {
             console.log(err.message)
@@ -55,7 +59,9 @@ const Recommender = (props) => {
     const handleGetRecommendations = () => {
         axios.get(`/get-recommendations?person=${props.userName}`)
         .then(res => {
-            console.log(res)
+            if(res.data.recommendations.length === 0){
+                setFoundAnyNew(true)
+            }
             setNewRest(res.data.recommendations)
         }).catch(err => {
             console.log(err.message)
@@ -87,10 +93,29 @@ const Recommender = (props) => {
             </tr>)
     })
 
+    const infoFoundAny = (
+        <Alert variant="dark" onClose={() => setFoundAny(false)} dismissible>
+            <Alert.Heading>O nie!</Alert.Heading>
+            <p>
+            Nie udało się znaleźć rekomendacji spełniających wymagania... Spróbuj z innymi parametrami!
+            </p>
+      </Alert>
+    )
+
+    const infoFoundAnyNew = (
+        <Alert variant="dark" onClose={() => setFoundAnyNew(false)} dismissible>
+            <Alert.Heading>No cóż...</Alert.Heading>
+            <p>
+            Na to wygląda że znasz już wszystkie miejsca preferowane przez twoich znajomych, więc nic nowego nie możemy ci polecić!
+            </p>
+      </Alert>
+    )
+
     return(
         <Fragment>
         <Card style={{margin: "30px"}}>
             <Card.Body>
+                {foundAny ? infoFoundAny : null}
                 <Card.Title>Poznaj rekomendowane restauracje!</Card.Title>
                 <Card.Text>
                 Możesz wybrać preferowaną lokalizację oraz typ kuchni. Zlisty znajomych możesz wybrać osoby, tak by filtrować również po preferencjach przyjaciół - pokażemy ci ranking restauracji, które oni lubią!
@@ -145,6 +170,7 @@ const Recommender = (props) => {
 
         <Card style={{margin: "30px"}}>
             <Card.Body>
+                {foundAnyNew ? infoFoundAnyNew : null}
                 <Card.Title>Odkryj nowe smaki</Card.Title>
                 <Card.Text>
                 W tej rubryce znajdziesz listę restauracji, które są lubiane przez twoich znajomych, ale ty jeszcze ich nie odwiedzałeś (nie są na liście polubionych przez ciebie).
