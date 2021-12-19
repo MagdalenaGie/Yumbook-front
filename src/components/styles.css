@@ -1,0 +1,18 @@
+.Logo{
+    max-width: 40px;
+    padding: 5px;
+    margin-left: 15px;
+}
+
+.SearchForm{
+    margin: 30px;
+}
+
+.RestaurantTable{
+    margin: 30px;
+    width: calc(100% - 60px) !important;
+}
+
+.ProfileTabs{
+    margin: 30px;
+}

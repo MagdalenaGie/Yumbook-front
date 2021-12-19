@@ -1,24 +1,41 @@
-import logo from './logo.svg';
 import './App.css';
+import Layout from './components/Layout';
+// Importing the Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Routes, Route} from 'react-router-dom';
+import SearchPage from './components/SearchPage';
+import UserPage from './components/UserPage';
+import LoginPage from './components/LoginPage';
+import Recommender from './components/Recommender';
+import { Logout } from './components/Logout';
+import { useState } from 'react';
 
 function App() {
+
+  const [isLogged, setIsLogged] = useState(false)
+  const [userName, setUserName] = useState("")
+
+  const isLoggedRoutes = (
+    <Routes>
+        <Route path="/logout" element={<Logout setLogged={setIsLogged} setUser={setUserName}/>} />
+        <Route path="/" element={<SearchPage/>} userName={userName}/>
+        <Route path="/search" element={<SearchPage userName={userName}/>} />
+        <Route path="/user" element={<UserPage userName={userName}/>}/>
+        <Route path="/recommend" element={<Recommender userName={userName}/>}/>
+      </Routes>
+  )
+
+  const isNotLoggedRoutes = (
+    <Routes>
+        <Route path="/" element={<LoginPage setLogged={setIsLogged} setUser={setUserName}/>}/>
+        <Route path="/login" element={<LoginPage setLogged={setIsLogged} setUser={setUserName}/>}/>
+        <Route path="/logout" element={<Logout setLogged={setIsLogged} setUser={setUserName}/>}/>
+      </Routes>
+  )
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout isLogged={isLogged}>
+      {isLogged ? isLoggedRoutes : isNotLoggedRoutes}
+    </Layout>
   );
 }
 
