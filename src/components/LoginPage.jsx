@@ -81,7 +81,7 @@ const LoginPage = (props) => {
         <Alert variant="danger" onClose={() => setRegFail(false)} dismissible>
             <Alert.Heading>O nie!</Alert.Heading>
             <p>
-            Nie udało się serejestrować! Podano błędne dane lub wystąpił błąd serwera... Spróbuj ponownie
+            Nie udało się zarejestrować! Podano błędne dane lub wystąpił błąd serwera... Spróbuj ponownie
             </p>
       </Alert>
     )
@@ -107,12 +107,12 @@ const LoginPage = (props) => {
                         <Form onSubmit={handleSubmitLoginForm}>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Login</Form.Label>
-                                <Form.Control type="text" placeholder="Enter email" />
+                                <Form.Control type="text" placeholder="Podaj login" />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Hasło</Form.Label>
-                                <Form.Control type="password" placeholder="Password" />
+                                <Form.Control type="password" placeholder="Podaj hasło" />
                             </Form.Group>
                             <Button variant="dark" type="submit">
                                 Zaloguj
@@ -132,20 +132,20 @@ const LoginPage = (props) => {
                         <Form onSubmit={handleSubmitRegisterForm}>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Imie</Form.Label>
-                                <Form.Control type="text" placeholder="Enter email" />
+                                <Form.Control type="text" placeholder="Podaj imię" />
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Login</Form.Label>
-                                <Form.Control type="text" placeholder="Enter email" />
+                                <Form.Control type="text" placeholder="Podaj login" />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Hasło</Form.Label>
-                                <Form.Control type="password" placeholder="Password" />
+                                <Form.Control type="password" placeholder="Podaj hasło" />
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Powtórz hasło</Form.Label>
-                                <Form.Control type="password" placeholder="Password" />
+                                <Form.Control type="password" placeholder="Powtórz hasło" />
                             </Form.Group>
                             <Button variant="dark" type="submit">
                                 Utwórz konto
